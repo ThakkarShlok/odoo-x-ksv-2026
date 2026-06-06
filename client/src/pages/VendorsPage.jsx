@@ -5,7 +5,7 @@ import { Edit2, Plus, Search, Star, Trash2 } from 'lucide-react'
 import useAuth from '../hooks/useAuth'
 import useFetch from '../hooks/useFetch'
 import axiosInstance from '../utils/axiosInstance'
-import Badge from '../components/Badge'
+import Badge, { statusToColor } from '../components/Badge'
 import Button from '../components/Button'
 import Card from '../components/Card'
 import DataTable from '../components/DataTable'
@@ -208,7 +208,7 @@ export default function VendorsPage() {
       key: 'isActive',
       label: 'Status',
       render: (value) => (
-        <Badge label={value ? 'Active' : 'Inactive'} color={value ? 'emerald' : 'slate'} />
+        <Badge label={value ? 'Active' : 'Inactive'} color={statusToColor(value ? 'ACTIVE' : 'INACTIVE')} />
       ),
     },
     {

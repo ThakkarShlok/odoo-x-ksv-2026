@@ -9,13 +9,13 @@ const colorMap = {
 }
 
 export function statusToColor(status) {
-  if (['APPROVED', 'ISSUED', 'PAID', 'PUBLISHED', 'FULFILLED'].includes(status)) {
+  if (['APPROVED', 'ISSUED', 'PAID', 'PUBLISHED', 'FULFILLED', 'ACTIVE', 'QUOTED'].includes(status)) {
     return 'emerald'
   }
-  if (['PENDING', 'SUBMITTED', 'UNDER_REVIEW', 'DRAFT'].includes(status)) {
+  if (['PENDING', 'SUBMITTED', 'UNDER_REVIEW', 'DRAFT', 'INVITED'].includes(status)) {
     return 'amber'
   }
-  if (['REJECTED', 'CANCELLED'].includes(status)) {
+  if (['REJECTED', 'CANCELLED', 'INACTIVE'].includes(status)) {
     return 'rose'
   }
   return 'slate'

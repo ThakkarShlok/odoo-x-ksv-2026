@@ -93,7 +93,7 @@ export default function POListPage() {
           return <span className="text-sm text-slate-400">View only</span>
         }
         if (hasInvoice) {
-          return <Badge label="Invoice Generated" color="emerald" />
+          return <Badge label="Invoice Generated" color={statusToColor('ISSUED')} />
         }
         return (
           <Button

@@ -18,6 +18,7 @@ import VendorQuotationSubmitPage from './pages/VendorQuotationSubmitPage'
 import MyQuotationsPage from './pages/MyQuotationsPage'
 import POListPage from './pages/POListPage'
 import InvoicesPage from './pages/InvoicesPage'
+import ActivityLogPage from './pages/ActivityLogPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 function RootRedirect() {
@@ -56,6 +57,7 @@ export default function App() {
             <Route path="/my-pos" element={<POListPage />} />
             <Route path="/invoices" element={<InvoicesPage />} />
             <Route path="/my-invoices" element={<InvoicesPage />} />
+            <Route path="/activity" element={<ActivityLogPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>

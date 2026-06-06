@@ -165,7 +165,7 @@ export default function RFQDetailPage() {
                     className="inline-flex items-center gap-2 rounded-full bg-slate-50 px-3 py-1.5 text-sm text-slate-700 ring-1 ring-slate-200"
                   >
                     {invite.vendor.name}
-                    <Badge label={hasQuoted ? 'quoted' : 'invited'} color={hasQuoted ? 'emerald' : 'amber'} />
+                    <Badge label={hasQuoted ? 'quoted' : 'invited'} color={statusToColor(hasQuoted ? 'QUOTED' : 'INVITED')} />
                   </span>
                 )
               })}
