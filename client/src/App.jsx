@@ -16,6 +16,8 @@ import ApprovalsPage from './pages/ApprovalsPage'
 import VendorMyRFQsPage from './pages/VendorMyRFQsPage'
 import VendorQuotationSubmitPage from './pages/VendorQuotationSubmitPage'
 import MyQuotationsPage from './pages/MyQuotationsPage'
+import POListPage from './pages/POListPage'
+import InvoicesPage from './pages/InvoicesPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 function RootRedirect() {
@@ -50,6 +52,10 @@ export default function App() {
             <Route path="/my-rfqs" element={<VendorMyRFQsPage />} />
             <Route path="/my-rfqs/:id/quote" element={<VendorQuotationSubmitPage />} />
             <Route path="/my-quotations" element={<MyQuotationsPage />} />
+            <Route path="/pos" element={<POListPage />} />
+            <Route path="/my-pos" element={<POListPage />} />
+            <Route path="/invoices" element={<InvoicesPage />} />
+            <Route path="/my-invoices" element={<InvoicesPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>

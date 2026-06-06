@@ -1,7 +1,8 @@
+import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { format, formatDistanceToNow } from 'date-fns'
 import toast from 'react-hot-toast'
-import { ArrowLeft, Clock, GitCompareArrows, Send, XCircle } from 'lucide-react'
+import { ArrowLeft, Clock, GitCompareArrows, Package, Send, XCircle } from 'lucide-react'
 import useAuth from '../hooks/useAuth'
 import useFetch from '../hooks/useFetch'
 import axiosInstance from '../utils/axiosInstance'
@@ -16,6 +17,7 @@ export default function RFQDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { user } = useAuth()
+  const [generatingPOId, setGeneratingPOId] = useState(null)
   const canManage = user?.role === 'PROCUREMENT_OFFICER'
   const { data, loading, error, refetch } = useFetch(`/api/rfqs/${id}`)
   const {
@@ -23,9 +25,11 @@ export default function RFQDetailPage() {
     loading: quotationsLoading,
     error: quotationsError,
   } = useFetch(`/api/rfqs/${id}/quotations`)
+  const { data: poData, refetch: refetchPOs } = useFetch('/api/pos')
   const rfq = data?.rfq
   const quotations = quotationData?.quotations || rfq?.quotations || []
   const quotedVendorIds = new Set(quotations.map((quotation) => quotation.vendorId))
+  const poQuotationIds = new Set((poData?.pos || []).map((po) => po.quotationId))
 
   const handlePublish = async () => {
     try {
@@ -44,6 +48,19 @@ export default function RFQDetailPage() {
       refetch()
     } catch (err) {
       toast.error(err.response?.data?.message || 'Unable to close RFQ')
+    }
+  }
+
+  const handleGeneratePO = async (quotation) => {
+    setGeneratingPOId(quotation.id)
+    try {
+      await axiosInstance.post(`/api/pos/from-quotation/${quotation.id}`)
+      toast.success('Purchase order generated')
+      refetchPOs()
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Unable to generate purchase order')
+    } finally {
+      setGeneratingPOId(null)
     }
   }
 
@@ -193,6 +210,19 @@ export default function RFQDetailPage() {
                   <Link to={`/rfqs/${rfq.id}/compare`} className="mt-3 inline-block text-sm font-medium text-teal-700 hover:underline">
                     View Details
                   </Link>
+                  {canManage && quotation.status === 'APPROVED' && !poQuotationIds.has(quotation.id) && (
+                    <Button
+                      type="button"
+                      variant="primary"
+                      size="sm"
+                      loading={generatingPOId === quotation.id}
+                      className="mt-3 w-full gap-2"
+                      onClick={() => handleGeneratePO(quotation)}
+                    >
+                      <Package className="h-4 w-4" />
+                      Generate Purchase Order
+                    </Button>
+                  )}
                 </div>
               ))}
             </div>
