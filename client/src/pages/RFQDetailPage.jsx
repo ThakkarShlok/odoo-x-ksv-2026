@@ -28,6 +28,7 @@ export default function RFQDetailPage() {
   const { data: poData, refetch: refetchPOs } = useFetch('/api/pos')
   const rfq = data?.rfq
   const quotations = quotationData?.quotations || rfq?.quotations || []
+  const hasMultipleQuotations = quotations.length >= 2
   const quotedVendorIds = new Set(quotations.map((quotation) => quotation.vendorId))
   const poQuotationIds = new Set((poData?.pos || []).map((po) => po.quotationId))
 
@@ -109,7 +110,15 @@ export default function RFQDetailPage() {
         </div>
 
         {canManage && (
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
+            {hasMultipleQuotations && (
+              <Link to={`/rfqs/${rfq.id}/compare`}>
+                <Button type="button" variant="accent" className="gap-2">
+                  <GitCompareArrows className="h-4 w-4" />
+                  Compare All Quotations
+                </Button>
+              </Link>
+            )}
             {rfq.status === 'DRAFT' && (
               <Button type="button" className="gap-2" onClick={handlePublish}>
                 <Send className="h-4 w-4" />
@@ -179,11 +188,11 @@ export default function RFQDetailPage() {
               <h3 className="text-lg font-semibold tracking-tight text-slate-900">Quotations Received</h3>
               <p className="mt-1 text-sm text-slate-500">{quotations.length} vendor responses</p>
             </div>
-            {quotations.length >= 2 && (
+            {hasMultipleQuotations && (
               <Link to={`/rfqs/${rfq.id}/compare`}>
                 <Button type="button" variant="accent" size="sm" className="gap-2">
                   <GitCompareArrows className="h-4 w-4" />
-                  Compare All
+                  Compare All Quotations
                 </Button>
               </Link>
             )}

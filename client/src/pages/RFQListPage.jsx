@@ -38,12 +38,12 @@ export default function RFQListPage() {
     {
       key: 'items',
       label: 'Items',
-      render: (_value, row) => row.items?.length || row._count?.items || '—',
+      render: (_value, row) => row.items?.length ?? row._count?.items ?? '—',
     },
     {
       key: 'vendors',
       label: 'Vendors Invited',
-      render: (_value, row) => row.vendors?.length || row._count?.vendors || '—',
+      render: (_value, row) => row.vendors?.length ?? row._count?.vendors ?? '—',
     },
     {
       key: 'deadline',

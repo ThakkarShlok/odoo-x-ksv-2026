@@ -29,6 +29,14 @@ async function listRFQs(req, res, next) {
 
     const rfqs = await prisma.rFQ.findMany({
       where,
+      include: {
+        _count: {
+          select: {
+            items: true,
+            vendors: true
+          }
+        }
+      },
       orderBy: { createdAt: 'desc' }
     })
 

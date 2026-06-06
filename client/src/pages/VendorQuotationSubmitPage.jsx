@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import toast from 'react-hot-toast'
@@ -31,7 +31,7 @@ export default function VendorQuotationSubmitPage() {
     },
   })
   // eslint-disable-next-line react-hooks/incompatible-library
-  const watchedItems = watch('items')
+  const items = watch('items')
 
   useEffect(() => {
     if (!rfq) return
@@ -47,13 +47,11 @@ export default function VendorQuotationSubmitPage() {
     })
   }, [rfq, reset])
 
-  const grandTotal = useMemo(() => {
-    return (watchedItems || []).reduce((sum, item) => {
-      const quantity = Number(item.quantity || 0)
-      const unitPrice = Number(item.unitPrice || 0)
-      return sum + quantity * unitPrice
-    }, 0)
-  }, [watchedItems])
+  const grandTotal = (items || []).reduce((sum, item) => {
+    const quantity = Number(item.quantity || 0)
+    const unitPrice = Number(item.unitPrice || 0)
+    return sum + quantity * unitPrice
+  }, 0)
 
   const onSubmit = async (values) => {
     setSubmitting(true)
@@ -116,8 +114,8 @@ export default function VendorQuotationSubmitPage() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(320px,2fr)]">
         <div className="space-y-4">
           {rfq.items.map((item, index) => {
-            const quantity = Number(watchedItems?.[index]?.quantity || item.quantity || 0)
-            const unitPrice = Number(watchedItems?.[index]?.unitPrice || 0)
+            const quantity = Number(items?.[index]?.quantity || item.quantity || 0)
+            const unitPrice = Number(items?.[index]?.unitPrice || 0)
             const rowTotal = quantity * unitPrice
 
             return (

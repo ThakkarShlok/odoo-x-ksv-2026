@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { formatDistanceToNow } from 'date-fns'
 import toast from 'react-hot-toast'
 import { CheckCircle2, Clock, XCircle } from 'lucide-react'
+import useAuth from '../hooks/useAuth'
 import useFetch from '../hooks/useFetch'
 import axiosInstance from '../utils/axiosInstance'
 import { formatCurrency } from '../utils/formatters'
@@ -78,9 +79,16 @@ function DecisionModal({ approval, decision, onClose, onDecided }) {
 }
 
 export default function ApprovalsPage() {
+  const { user } = useAuth()
   const [activeDecision, setActiveDecision] = useState(null)
   const { data, loading, error, refetch } = useFetch('/api/approvals/pending')
   const approvals = data?.approvals || []
+
+  useEffect(() => {
+    if (user?.role !== 'MANAGER') return undefined
+    const id = window.setTimeout(() => refetch(), 0)
+    return () => window.clearTimeout(id)
+  }, [user?.id, user?.role, refetch])
 
   return (
     <div className="space-y-6">
