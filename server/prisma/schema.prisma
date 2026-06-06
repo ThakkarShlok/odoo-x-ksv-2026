@@ -8,16 +8,210 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
 enum Role {
-  USER
+  PROCUREMENT_OFFICER
+  VENDOR
+  MANAGER
   ADMIN
 }
 
+enum RFQStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+  CANCELLED
+}
+
+enum QuotationStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum POStatus {
+  DRAFT
+  ISSUED
+  FULFILLED
+  CANCELLED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  ISSUED
+  PAID
+}
+
+// ─── Models ───────────────────────────────────────────────────────────────────
+
 model User {
+  id           Int           @id @default(autoincrement())
+  name         String
+  email        String        @unique
+  password     String
+  role         Role          @default(PROCUREMENT_OFFICER)
+  createdAt    DateTime      @default(now())
+  vendor       Vendor?
+  rfqsCreated  RFQ[]         @relation("RFQCreator")
+  approvals    Approval[]
+  activityLogs ActivityLog[]
+}
+
+model Vendor {
+  id          Int         @id @default(autoincrement())
+  name        String
+  contactName String
+  email       String      @unique
+  phone       String
+  gstNumber   String?
+  category    String
+  address     String
+  rating      Float       @default(0.0)
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  userId      Int?        @unique
+  user        User?       @relation(fields: [userId], references: [id])
+  rfqVendors  RFQVendor[]
+  quotations  Quotation[]
+
+  @@index([category, isActive])
+}
+
+model RFQ {
+  id          Int         @id @default(autoincrement())
+  rfqNumber   String      @unique
+  title       String
+  description String?
+  deadline    DateTime
+  status      RFQStatus   @default(DRAFT)
+  createdAt   DateTime    @default(now())
+  createdById Int
+  createdBy   User        @relation("RFQCreator", fields: [createdById], references: [id])
+  items       RFQItem[]
+  vendors     RFQVendor[]
+  quotations  Quotation[]
+
+  @@index([status])
+  @@index([createdById])
+}
+
+model RFQItem {
+  id          Int     @id @default(autoincrement())
+  rfqId       Int
+  productName String
+  description String?
+  quantity    Int
+  unit        String  @default("pcs")
+  rfq         RFQ     @relation(fields: [rfqId], references: [id], onDelete: Cascade)
+
+  @@index([rfqId])
+}
+
+model RFQVendor {
   id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
+  rfqId     Int
+  vendorId  Int
+  invitedAt DateTime @default(now())
+  rfq       RFQ      @relation(fields: [rfqId], references: [id], onDelete: Cascade)
+  vendor    Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@unique([rfqId, vendorId])
+  @@index([vendorId])
+}
+
+model Quotation {
+  id              Int             @id @default(autoincrement())
+  quotationNumber String          @unique
+  rfqId           Int
+  vendorId        Int
+  totalAmount     Decimal         @db.Decimal(12, 2)
+  deliveryDays    Int
+  notes           String?
+  status          QuotationStatus @default(SUBMITTED)
+  submittedAt     DateTime        @default(now())
+  rfq             RFQ             @relation(fields: [rfqId], references: [id])
+  vendor          Vendor          @relation(fields: [vendorId], references: [id])
+  items           QuotationItem[]
+  approval        Approval?
+  purchaseOrder   PurchaseOrder?
+
+  @@unique([rfqId, vendorId])
+  @@index([status])
+}
+
+model QuotationItem {
+  id          Int       @id @default(autoincrement())
+  quotationId Int
+  productName String
+  quantity    Int
+  unitPrice   Decimal   @db.Decimal(10, 2)
+  totalPrice  Decimal   @db.Decimal(12, 2)
+  quotation   Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+
+  @@index([quotationId])
+}
+
+model Approval {
+  id          Int            @id @default(autoincrement())
+  quotationId Int            @unique
+  approverId  Int
+  status      ApprovalStatus @default(PENDING)
+  remarks     String?
+  decidedAt   DateTime?
+  quotation   Quotation      @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  approver    User           @relation(fields: [approverId], references: [id])
+
+  @@index([status])
+}
+
+model PurchaseOrder {
+  id          Int       @id @default(autoincrement())
+  poNumber    String    @unique
+  quotationId Int       @unique
+  totalAmount Decimal   @db.Decimal(12, 2)
+  status      POStatus  @default(ISSUED)
+  issuedAt    DateTime  @default(now())
+  quotation   Quotation @relation(fields: [quotationId], references: [id])
+  invoice     Invoice?
+
+  @@index([status])
+}
+
+model Invoice {
+  id            Int           @id @default(autoincrement())
+  invoiceNumber String        @unique
+  poId          Int           @unique
+  subtotal      Decimal       @db.Decimal(12, 2)
+  taxRate       Decimal       @default(18.00) @db.Decimal(5, 2)
+  taxAmount     Decimal       @db.Decimal(12, 2)
+  totalAmount   Decimal       @db.Decimal(12, 2)
+  status        InvoiceStatus @default(ISSUED)
+  issuedAt      DateTime      @default(now())
+  emailSentAt   DateTime?
+  po            PurchaseOrder @relation(fields: [poId], references: [id])
+
+  @@index([status])
+}
+
+model ActivityLog {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  action     String
+  entityType String
+  entityId   Int
+  metadata   Json?
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
 }
