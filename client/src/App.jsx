@@ -11,6 +11,8 @@ import VendorsPage from './pages/VendorsPage'
 import RFQListPage from './pages/RFQListPage'
 import RFQCreatePage from './pages/RFQCreatePage'
 import RFQDetailPage from './pages/RFQDetailPage'
+import QuotationComparePage from './pages/QuotationComparePage'
+import ApprovalsPage from './pages/ApprovalsPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 function RootRedirect() {
@@ -39,7 +41,9 @@ export default function App() {
             <Route path="/vendors" element={<VendorsPage />} />
             <Route path="/rfqs" element={<RFQListPage />} />
             <Route path="/rfqs/new" element={<RFQCreatePage />} />
+            <Route path="/rfqs/:id/compare" element={<QuotationComparePage />} />
             <Route path="/rfqs/:id" element={<RFQDetailPage />} />
+            <Route path="/approvals" element={<ApprovalsPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
