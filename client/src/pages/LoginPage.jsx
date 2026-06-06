@@ -29,9 +29,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
       <Card className="w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Sign in</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900 mb-6">Sign in</h1>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <Input
             id="email"
@@ -53,9 +53,9 @@ export default function LoginPage() {
             Sign in
           </Button>
         </form>
-        <p className="mt-4 text-center text-sm text-gray-500">
+        <p className="mt-4 text-center text-sm text-slate-500">
           No account?{' '}
-          <Link to="/register" className="text-blue-600 hover:underline">
+          <Link to="/register" className="text-teal-700 hover:underline">
             Register
           </Link>
         </p>
