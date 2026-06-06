@@ -48,9 +48,6 @@ const navItems = {
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { label: 'My RFQs', path: '/my-rfqs', icon: FileText },
     { label: 'My Quotations', path: '/my-quotations', icon: MessageSquare },
-    { label: 'My Purchase Orders', path: '/my-pos', icon: Package },
-    { label: 'My Invoices', path: '/my-invoices', icon: Receipt },
-    { label: 'Activity Log', path: '/activity', icon: History },
   ],
 }
 

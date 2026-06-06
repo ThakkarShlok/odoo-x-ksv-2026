@@ -13,6 +13,9 @@ import RFQCreatePage from './pages/RFQCreatePage'
 import RFQDetailPage from './pages/RFQDetailPage'
 import QuotationComparePage from './pages/QuotationComparePage'
 import ApprovalsPage from './pages/ApprovalsPage'
+import VendorMyRFQsPage from './pages/VendorMyRFQsPage'
+import VendorQuotationSubmitPage from './pages/VendorQuotationSubmitPage'
+import MyQuotationsPage from './pages/MyQuotationsPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 function RootRedirect() {
@@ -44,6 +47,9 @@ export default function App() {
             <Route path="/rfqs/:id/compare" element={<QuotationComparePage />} />
             <Route path="/rfqs/:id" element={<RFQDetailPage />} />
             <Route path="/approvals" element={<ApprovalsPage />} />
+            <Route path="/my-rfqs" element={<VendorMyRFQsPage />} />
+            <Route path="/my-rfqs/:id/quote" element={<VendorQuotationSubmitPage />} />
+            <Route path="/my-quotations" element={<MyQuotationsPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
